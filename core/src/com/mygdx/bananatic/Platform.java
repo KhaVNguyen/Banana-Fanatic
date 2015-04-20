@@ -35,4 +35,8 @@ public class Platform {
     public void draw(){
         Bananatic.batch.draw(platformSprite, getXPosition(), getYPosition());
     }
+
+    public void testGitHub(){
+
+    }
 }
