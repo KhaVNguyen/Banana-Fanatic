@@ -1,0 +1,2 @@
+# Banana-Fanatic
+Game where two players control monkeys with the goal of collecting more bananas than the other. Monkeys can throw bananas at each other, at the cost of taking away from their current inventory of bananas, in order to hamper the opponent. At random times, banana peels will be spawned instead of standard bananas, which will cause monkeys that walk over them to fall down and be unable to move for a short time. 
