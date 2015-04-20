@@ -32,7 +32,7 @@ public class GameScreen implements Screen{
 
     public GameScreen(){
         blueMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_blue.png")), 0, 0, 450f, 2000f, 0);
-        yellowMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_yellow.png")), Gdx.graphics.getWidth() - 100, 0, 450f, 1800f,0);
+        yellowMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_yellow.png")), Gdx.graphics.getWidth() - 100, 0, 450f, 2000f,0);
         backgroundImage = new Sprite(new Texture(Gdx.files.internal("jungle_background.png")));
         bananaArray = new Array<Banana>();
         addBananaToBananaList();
