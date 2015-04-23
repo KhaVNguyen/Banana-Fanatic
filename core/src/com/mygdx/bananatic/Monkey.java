@@ -92,6 +92,10 @@ public class Monkey {
         monkeySprite.translateX(-450 * Gdx.graphics.getDeltaTime());
     }
 
+    public float getYVelocity(){
+        return yVelocity;
+    }
+
     //return what the monkey is currently doing
     public int returnState(){
         return state;
@@ -120,21 +124,26 @@ public class Monkey {
     }
 
     public void ascend(){
+        System.out.println("YPosition =   " + getYPosition());
         setYPosition(getYPosition() + yVelocity * Gdx.graphics.getDeltaTime());
         yVelocity -= originalVelocity / 14; // as the monkey ascends, he will start fast then slow down near the peak of the jump
         if(yVelocity <= 0) { // has reached the top of the jump
             setState(DESCENDING);
         }
+        // System.out.println("yVelocity: " + getYVelocity());
+
     }
 
     public void descend(){
+        System.out.println("YPosition =   " + getYPosition());
         setYPosition(getYPosition() - yVelocity * Gdx.graphics.getDeltaTime());
         yVelocity += originalVelocity / 14; // determines how fast the jump takes;
-        if(getYPosition() <= 0){
-            setState(STANDING); //reached the end of the jump
-            setYPosition(0); //prevent from jumping down farther than a platform
-            yVelocity = originalVelocity;
-        }
+        // System.out.println("yVelocity: " + getYVelocity());
+
+    }
+
+    public void resetVelocity(){
+        yVelocity = originalVelocity;
     }
 
 
@@ -177,6 +186,14 @@ public class Monkey {
 
     }
 
+    public boolean overlapsPlatform(Platform p){
+        return !(getXPosition() > p.getXPosition() + p.getWidth() ||
+                getXPosition() + getWidth() < p.getXPosition() ||
+                getYPosition() > p.getYPosition() + p.getHeight() ||
+                getYPosition() + getHeight() < p.getYPosition());
+
+    }
+
 
     public void draw(SpriteBatch batch){
         batch.draw(monkeySprite, getXPosition(), getYPosition());
@@ -199,6 +216,11 @@ public class Monkey {
         }
         else if(getXPosition() <= 0){
             setXPosition(0);
+        }
+
+        if(getYPosition() <= 0){
+            setYPosition(0);
+            setState(STANDING);
         }
     }
 

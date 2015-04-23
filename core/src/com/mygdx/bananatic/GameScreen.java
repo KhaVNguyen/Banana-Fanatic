@@ -25,20 +25,23 @@ public class GameScreen implements Screen{
     Sound bananaPickupSound;
     Music backgroundMusic;
     Monkey blueMonkey;
-    Monkey yellowMonkey;
+    Monkey brownMonkey;
     Array <Banana> bananaArray;
     long lastTimeBananaSpawned;
     Array <Platform> platformArray;
 
     public GameScreen(){
-        blueMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_blue.png")), 0, 0, 450f, 2000f, 0);
-        yellowMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_yellow.png")), Gdx.graphics.getWidth() - 100, 0, 450f, 2000f,0);
+        blueMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_blue.png")), 0, 0, 20f, 2000f, 0);
+        brownMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward.png")), Gdx.graphics.getWidth() - 100, 0, 20f, 2000f,0);
         backgroundImage = new Sprite(new Texture(Gdx.files.internal("jungle_background.png")));
         bananaArray = new Array<Banana>();
         addBananaToBananaList();
 
         platformArray = new Array<Platform>();
-        platformArray.add(new Platform(new Texture(Gdx.files.internal("platform1.png")), Gdx.graphics.getHeight()/4f, Gdx.graphics.getWidth()/4f));
+        platformArray.add(new Platform(new Texture(Gdx.files.internal("platform1_slim.png")), 50, 200));
+        platformArray.add(new Platform(new Texture(Gdx.files.internal("platform2_slim.png")), 550, 200));
+        platformArray.add(new Platform(new Texture(Gdx.files.internal("platform1_slim.png")), 1050, 200));
+
     }
 
     @Override
@@ -70,37 +73,54 @@ public class GameScreen implements Screen{
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        for(int i = 0; i < platformArray.size; i++){
+            if(blueMonkey.returnState() == Monkey.DESCENDING){
+                if(blueMonkey.overlapsPlatform(platformArray.get(i))){
+                    blueMonkey.setState(Monkey.STANDING);
+                }
+            }
+            if(blueMonkey.returnState() == Monkey.STANDING )
+        }
+
+
+
+
 
         // handles user input via the keyboard
         // WASD controls one monkey, while the arrow keys control the other
-        if(Gdx.input.isKeyPressed(Keys.W) && blueMonkey.getYPosition() == 0){
+        if(Gdx.input.isKeyPressed(Keys.W) && blueMonkey.returnState() == Monkey.STANDING){
+            blueMonkey.resetVelocity();
             blueMonkey.setState(Monkey.ASCENDING);
         }
 
-        if(Gdx.input.isKeyPressed(Keys.D)){
+        if (Gdx.input.isKeyPressed(Keys.D)){
             blueMonkey.moveRight();
         }
         if(Gdx.input.isKeyPressed(Keys.A)){
             blueMonkey.moveLeft();
         }
 
-        if(Gdx.input.isKeyPressed(Keys.UP) && yellowMonkey.getYPosition() == 0){
-            yellowMonkey.setState(Monkey.ASCENDING);
+        if(Gdx.input.isKeyPressed(Keys.UP) && brownMonkey.getYPosition() == 0){
+            brownMonkey.setState(Monkey.ASCENDING);
         }
         if(Gdx.input.isKeyPressed(Keys.RIGHT)){
-            yellowMonkey.moveRight();
+            brownMonkey.moveRight();
         }
         if(Gdx.input.isKeyPressed(Keys.LEFT)){
-            yellowMonkey.moveLeft();
+            brownMonkey.moveLeft();
         }
 
+
+
         monkeyJumpsIfKeyPressed(blueMonkey);
-        monkeyJumpsIfKeyPressed(yellowMonkey);
+
+        monkeyJumpsIfKeyPressed(brownMonkey);
+
 
 
         // make sure the monkey sprites stay within the bounds of the screen
         blueMonkey.keepWithinScreenBounds();
-        yellowMonkey.keepWithinScreenBounds();
+        brownMonkey.keepWithinScreenBounds();
 
 
         if(TimeUtils.nanoTime() - lastTimeBananaSpawned > 1000000000){
@@ -117,31 +137,36 @@ public class GameScreen implements Screen{
                 bananaIterator.remove();
                 System.out.println("Blue Monkey banana counter: " + blueMonkey.getNumberOfBananasCollected());
             }
-            else if(yellowMonkey.overlapsBanana(banana)){
-                yellowMonkey.addToBananaCounter(1);
+            else if(brownMonkey.overlapsBanana(banana)){
+                brownMonkey.addToBananaCounter(1);
                 banana.dispose();
                 bananaIterator.remove();
-                System.out.println("Yellow monkey banana counter: " + yellowMonkey.getNumberOfBananasCollected());
+                System.out.println("Yellow monkey banana counter: " + brownMonkey.getNumberOfBananasCollected());
 
             }
             else if(banana.getYPosition() <= 0) bananaIterator.remove();
 
         }
 
+
         Bananatic.batch.begin();
 
         backgroundImage.draw(Bananatic.batch);
+        for(Platform p: platformArray){
+            p.draw();
+        }
         blueMonkey.draw(Bananatic.batch);
-        yellowMonkey.draw(Bananatic.batch);
+        brownMonkey.draw(Bananatic.batch);
         for(Banana b: bananaArray){
             b.draw(Bananatic.batch);
         }
         blueMonkey.drawBananaCount(Bananatic.batch);
-        yellowMonkey.drawBananaCount(Bananatic.batch);
-        // drawPlatforms();
+        brownMonkey.drawBananaCount(Bananatic.batch);
 
 
         Bananatic.batch.end();
+
+        System.out.println("The blue monkey's state is: " + blueMonkey.returnState());
 
     }
 
@@ -150,7 +175,7 @@ public class GameScreen implements Screen{
         bananaPickupSound.dispose();
         backgroundMusic.dispose();
         blueMonkey.dispose();
-        yellowMonkey.dispose();
+        brownMonkey.dispose();
 
 
     }
@@ -177,4 +202,29 @@ public class GameScreen implements Screen{
             p.draw();
         }
     }
+
+    /** private boolean hitPlatform(Monkey m){
+        for(int i = 0; i < platformArray.size; i++){
+            if(m.returnState() == Monkey.DESCENDING){
+                if(m.overlapsPlatform(platformArray.get(i))){
+                    m.setState(Monkey.STANDING);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean offPlatform(Monkey m){
+        for(int i = 0; i < platformArray.size; i++){
+            if(!m.overlapsPlatform(platformArray.get(i))){
+                return true;
+            }
+        }
+        return false;
+    } */
+
+
+
+
 }
