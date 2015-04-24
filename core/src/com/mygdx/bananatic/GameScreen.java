@@ -29,10 +29,11 @@ public class GameScreen implements Screen{
     Array <Banana> bananaArray;
     long lastTimeBananaSpawned;
     Array <Platform> platformArray;
+    final float GRAVITY_CONSTANT = 850;
 
     public GameScreen(){
-        blueMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_blue.png")), 0, 0, 20f, 2000f, 0);
-        brownMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward.png")), Gdx.graphics.getWidth() - 100, 0, 20f, 2000f,0);
+        blueMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_blue.png")), 0, 0, 20f, 2100f, 0);
+        brownMonkey = new Monkey(new Texture(Gdx.files.internal("monkey_faceforward_yellow.png")), Gdx.graphics.getWidth() - 100, 0, 20f, 2100f,0);
         backgroundImage = new Sprite(new Texture(Gdx.files.internal("jungle_background.png")));
         bananaArray = new Array<Banana>();
         addBananaToBananaList();
@@ -41,6 +42,9 @@ public class GameScreen implements Screen{
         platformArray.add(new Platform(new Texture(Gdx.files.internal("platform1_slim.png")), 50, 200));
         platformArray.add(new Platform(new Texture(Gdx.files.internal("platform2_slim.png")), 550, 200));
         platformArray.add(new Platform(new Texture(Gdx.files.internal("platform1_slim.png")), 1050, 200));
+        platformArray.add(new Platform(new Texture(Gdx.files.internal("platform1_slim.png")), 50, 400));
+        platformArray.add(new Platform(new Texture(Gdx.files.internal("platform2_slim.png")), 550, 400));
+        platformArray.add(new Platform(new Texture(Gdx.files.internal("platform1_slim.png")), 1050, 400));
 
     }
 
@@ -73,30 +77,18 @@ public class GameScreen implements Screen{
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        for(int i = 0; i < platformArray.size; i++){
-            if(blueMonkey.returnState() == Monkey.DESCENDING){
-                if(blueMonkey.overlapsPlatform(platformArray.get(i))){
-                    blueMonkey.setState(Monkey.STANDING);
-                }
-            }
-            if(blueMonkey.returnState() == Monkey.STANDING )
-        }
-
-
-
-
-
         // handles user input via the keyboard
         // WASD controls one monkey, while the arrow keys control the other
-        if(Gdx.input.isKeyPressed(Keys.W) && blueMonkey.returnState() == Monkey.STANDING){
+        if(Gdx.input.isKeyPressed(Keys.W) && blueMonkey.isGrounded()){
             blueMonkey.resetVelocity();
+            blueMonkey.setGrounded(false);
             blueMonkey.setState(Monkey.ASCENDING);
         }
 
-        if (Gdx.input.isKeyPressed(Keys.D)){
+        if (Gdx.input.isKeyPressed(Keys.D) && blueMonkey.returnState() != Monkey.FALLING){
             blueMonkey.moveRight();
         }
-        if(Gdx.input.isKeyPressed(Keys.A)){
+        if(Gdx.input.isKeyPressed(Keys.A) && blueMonkey.returnState() != Monkey.FALLING){
             blueMonkey.moveLeft();
         }
 
@@ -110,6 +102,26 @@ public class GameScreen implements Screen{
             brownMonkey.moveLeft();
         }
 
+        boolean overlappingAPlatform = false;
+        for(int i = 0; i < platformArray.size; i++){
+            if(blueMonkey.returnState() != Monkey.ASCENDING){
+                if(blueMonkey.overlapsPlatform(platformArray.get(i))) { // if the monkey overlaps any of the platforms
+                    blueMonkey.setYPosition(platformArray.get(i).getHeight() + platformArray.get(i).getYPosition());
+                    System.out.println("Overlapping platform");
+                    overlappingAPlatform = true;
+                }
+            }
+        }
+
+        if(overlappingAPlatform == true){
+            blueMonkey.setState(Monkey.STANDING);
+            blueMonkey.setGrounded(true);
+
+        }
+
+        else if (overlappingAPlatform == false){
+            blueMonkey.setGrounded(false);
+        }
 
 
         monkeyJumpsIfKeyPressed(blueMonkey);
@@ -135,13 +147,11 @@ public class GameScreen implements Screen{
                 blueMonkey.addToBananaCounter(1);
                 banana.dispose();
                 bananaIterator.remove();
-                System.out.println("Blue Monkey banana counter: " + blueMonkey.getNumberOfBananasCollected());
             }
             else if(brownMonkey.overlapsBanana(banana)){
                 brownMonkey.addToBananaCounter(1);
                 banana.dispose();
                 bananaIterator.remove();
-                System.out.println("Yellow monkey banana counter: " + brownMonkey.getNumberOfBananasCollected());
 
             }
             else if(banana.getYPosition() <= 0) bananaIterator.remove();
@@ -166,7 +176,7 @@ public class GameScreen implements Screen{
 
         Bananatic.batch.end();
 
-        System.out.println("The blue monkey's state is: " + blueMonkey.returnState());
+        System.out.println("The blue monkey's state is: " + blueMonkey.returnState() + " and is it grounded? : " + blueMonkey.isGrounded());
 
     }
 
@@ -187,6 +197,10 @@ public class GameScreen implements Screen{
         else if(monkey.isDescending()){
             monkey.descend();
         }
+        else if (!monkey.isDescending() && !monkey.isAscending() && !monkey.isGrounded()){
+            monkey.setState(Monkey.FALLING);
+            applyGravity(monkey);
+        }
     }
 
     private void addBananaToBananaList(){
@@ -203,28 +217,9 @@ public class GameScreen implements Screen{
         }
     }
 
-    /** private boolean hitPlatform(Monkey m){
-        for(int i = 0; i < platformArray.size; i++){
-            if(m.returnState() == Monkey.DESCENDING){
-                if(m.overlapsPlatform(platformArray.get(i))){
-                    m.setState(Monkey.STANDING);
-                    return true;
-                }
-            }
-        }
-        return false;
+    private void applyGravity(Monkey m){
+        m.moveDown(GRAVITY_CONSTANT);
+
     }
-
-    private boolean offPlatform(Monkey m){
-        for(int i = 0; i < platformArray.size; i++){
-            if(!m.overlapsPlatform(platformArray.get(i))){
-                return true;
-            }
-        }
-        return false;
-    } */
-
-
-
 
 }

@@ -13,7 +13,10 @@ import com.badlogic.gdx.utils.Array;
 public class Monkey {
     public static final int ASCENDING = 1;
     public static final int DESCENDING = -1;
+    public static final int FALLING = -2;
     public static final int STANDING = 0;
+
+    private boolean grounded;
 
     private Texture monkeyTexture;
     private Sprite monkeySprite;
@@ -22,6 +25,8 @@ public class Monkey {
     private float xVelocity;
     private float yVelocity;
     private float originalVelocity; // used in jump method to reset to after the jump is completed
+
+    private float originalYPosition;
 
     private int state;
 
@@ -35,6 +40,7 @@ public class Monkey {
         originalVelocity = 900;
         numberOfBananasCollected = 0;
         state = STANDING;
+        grounded = true;
     }
 
     public Monkey(Texture t, int x, int y, float xv, float yv, int bananas){
@@ -45,6 +51,7 @@ public class Monkey {
         originalVelocity = yv;
         numberOfBananasCollected = bananas;
         state = STANDING;
+        grounded = true;
     }
 
     public void addToBananaCounter(int i){
@@ -92,6 +99,17 @@ public class Monkey {
         monkeySprite.translateX(-450 * Gdx.graphics.getDeltaTime());
     }
 
+    public void moveUp(float f) {
+        monkeySprite.translateY(f * Gdx.graphics.getDeltaTime());
+    }
+
+    public void moveDown(float f) {
+        monkeySprite.translateY(-f * Gdx.graphics.getDeltaTime());
+    }
+
+
+
+
     public float getYVelocity(){
         return yVelocity;
     }
@@ -124,22 +142,34 @@ public class Monkey {
     }
 
     public void ascend(){
-        System.out.println("YPosition =   " + getYPosition());
+        //System.out.println("yVelocity: " + getYVelocity());
+        //System.out.println("YPosition =   " + getYPosition());
+        yVelocity -= 150; // as the monkey ascends, he will start fast then slow down near the peak of the jump
         setYPosition(getYPosition() + yVelocity * Gdx.graphics.getDeltaTime());
-        yVelocity -= originalVelocity / 14; // as the monkey ascends, he will start fast then slow down near the peak of the jump
         if(yVelocity <= 0) { // has reached the top of the jump
+            yVelocity = 0;
             setState(DESCENDING);
         }
-        // System.out.println("yVelocity: " + getYVelocity());
 
     }
 
     public void descend(){
-        System.out.println("YPosition =   " + getYPosition());
+        //System.out.println("yVelocity: " + getYVelocity());
+        //System.out.println("YPosition =   " + getYPosition());
+        yVelocity += 150; // determines how fast the jump takes;
         setYPosition(getYPosition() - yVelocity * Gdx.graphics.getDeltaTime());
-        yVelocity += originalVelocity / 14; // determines how fast the jump takes;
-        // System.out.println("yVelocity: " + getYVelocity());
+        if(yVelocity >= originalVelocity){
+            setState(STANDING);
+        }
 
+    }
+
+    public boolean isGrounded(){
+        return grounded;
+    }
+
+    public void setGrounded(boolean b){
+        grounded = b;
     }
 
     public void resetVelocity(){
@@ -177,15 +207,6 @@ public class Monkey {
 
     }
 
-    public boolean overlapsMonkey(Monkey m){
-        return !(getXPosition() > m.getXPosition() + m.getWidth() ||
-                getXPosition() + getWidth() < m.getXPosition() ||
-                getYPosition() > m.getYPosition() + m.getHeight() ||
-                getYPosition() + getHeight() < m.getYPosition());
-
-
-    }
-
     public boolean overlapsPlatform(Platform p){
         return !(getXPosition() > p.getXPosition() + p.getWidth() ||
                 getXPosition() + getWidth() < p.getXPosition() ||
@@ -220,6 +241,7 @@ public class Monkey {
 
         if(getYPosition() <= 0){
             setYPosition(0);
+            setGrounded(true);
             setState(STANDING);
         }
     }
