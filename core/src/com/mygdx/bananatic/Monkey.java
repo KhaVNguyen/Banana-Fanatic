@@ -1,9 +1,9 @@
 package com.mygdx.bananatic;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 
@@ -11,12 +11,19 @@ import com.badlogic.gdx.utils.Array;
  * Created by Kha on 4/13/2015.
  */
 public class Monkey {
+    final float GRAVITY_CONSTANT = 1300;
+
     public static final int ASCENDING = 1;
     public static final int DESCENDING = -1;
     public static final int FALLING = -2;
     public static final int STANDING = 0;
 
-    private boolean grounded;
+    private int jumpKey;
+    private int leftKey;
+    private int rightKey;
+
+    private boolean grounded; // true if the monkey is standing on a surface such as the ground or a platform
+    private boolean isOverlappingAPlatform;
 
     private Texture monkeyTexture;
     private Sprite monkeySprite;
@@ -24,9 +31,8 @@ public class Monkey {
 
     private float xVelocity;
     private float yVelocity;
-    private float originalVelocity; // used in jump method to reset to after the jump is completed
+    private float originalYVelocity; // used in jump method to reset to after the jump is completed
 
-    private float originalYPosition;
 
     private int state;
 
@@ -37,29 +43,27 @@ public class Monkey {
         monkeySprite = new Sprite(monkeyTexture);
         xVelocity = 450f;
         yVelocity = 900;
-        originalVelocity = 900;
+        originalYVelocity = 900;
+        leftKey = Input.Keys.A;
+        rightKey = Input.Keys.D;
+        jumpKey = Input.Keys.W;
         numberOfBananasCollected = 0;
         state = STANDING;
         grounded = true;
     }
 
-    public Monkey(Texture t, int x, int y, float xv, float yv, int bananas){
+    public Monkey(Texture t, int x, int y, float xv, float yv, int left, int right, int jump, int bananas){
         monkeySprite = new Sprite(t);
         monkeySprite.setPosition(x, y);
         xVelocity = xv;
         yVelocity = yv;
-        originalVelocity = yv;
+        originalYVelocity = yv;
+        leftKey = left;
+        rightKey = right;
+        jumpKey = jump;
         numberOfBananasCollected = bananas;
         state = STANDING;
         grounded = true;
-    }
-
-    public void addToBananaCounter(int i){
-        numberOfBananasCollected+= i;
-    }
-
-    public void removeFromBananaCounter(int i){
-        numberOfBananasCollected -= i;
     }
 
     public void setXPosition(float x){
@@ -86,21 +90,12 @@ public class Monkey {
         return monkeySprite.getHeight();
     }
 
-
-    public void setPosition(float x, float y){
-        monkeySprite.setPosition(x, y);
-    }
-
     public void moveRight() {
-        monkeySprite.translateX(450f * Gdx.graphics.getDeltaTime());
+        monkeySprite.translateX(xVelocity * Gdx.graphics.getDeltaTime());
     }
 
     public void moveLeft() {
-        monkeySprite.translateX(-450 * Gdx.graphics.getDeltaTime());
-    }
-
-    public void moveUp(float f) {
-        monkeySprite.translateY(f * Gdx.graphics.getDeltaTime());
+        monkeySprite.translateX(-xVelocity * Gdx.graphics.getDeltaTime());
     }
 
     public void moveDown(float f) {
@@ -108,10 +103,12 @@ public class Monkey {
     }
 
 
+    public void addToBananaCounter(int i){
+        numberOfBananasCollected += i;
+    }
 
-
-    public float getYVelocity(){
-        return yVelocity;
+    public void removeFromBananaCounter(int i){
+        numberOfBananasCollected -= i;
     }
 
     //return what the monkey is currently doing
@@ -158,10 +155,14 @@ public class Monkey {
         //System.out.println("YPosition =   " + getYPosition());
         yVelocity += 150; // determines how fast the jump takes;
         setYPosition(getYPosition() - yVelocity * Gdx.graphics.getDeltaTime());
-        if(yVelocity >= originalVelocity){
+        if(yVelocity >= originalYVelocity){
             setState(STANDING);
         }
 
+    }
+
+    public void applyGravity(float gravity){
+        moveDown(gravity);
     }
 
     public boolean isGrounded(){
@@ -172,8 +173,17 @@ public class Monkey {
         grounded = b;
     }
 
+    public boolean isOverlappingAPlatform(){
+        return isOverlappingAPlatform;
+    }
+
+    public void setOverlappingAPlatform(boolean b){
+        isOverlappingAPlatform = b;
+
+    }
+
     public void resetVelocity(){
-        yVelocity = originalVelocity;
+        yVelocity = originalYVelocity;
     }
 
 
@@ -215,16 +225,6 @@ public class Monkey {
 
     }
 
-
-    public void draw(SpriteBatch batch){
-        batch.draw(monkeySprite, getXPosition(), getYPosition());
-    }
-
-    public void drawBananaCount(SpriteBatch batch){
-        String stringOfBananasCollected = Integer.toString(numberOfBananasCollected);
-        Bananatic.font.draw(batch, stringOfBananasCollected, getXPosition() + getWidth() / 2 - 10, getYPosition() + getHeight() + 10);
-    }
-
     public void dispose(){
         monkeySprite.getTexture().dispose();
     }
@@ -245,5 +245,63 @@ public class Monkey {
             setState(STANDING);
         }
     }
+
+    public void update(Array<Platform> platformList){ // given an array of platform from which the monkey will check collision
+        if(Gdx.input.isKeyPressed(jumpKey) && isGrounded()){
+            resetVelocity();
+            setGrounded(false);
+            setState(ASCENDING);
+        }
+        if (Gdx.input.isKeyPressed(rightKey) && returnState() != FALLING){
+            moveRight();
+        }
+        if(Gdx.input.isKeyPressed(leftKey) && returnState() != FALLING){
+            moveLeft();
+        }
+
+        setOverlappingAPlatform(false);
+        for(int i = 0; i < platformList.size; i++){
+            if(returnState() != ASCENDING){
+                if(overlapsPlatform(platformList.get(i))) { // if the monkey overlaps any of the platforms
+                    setYPosition(platformList.get(i).getHeight() + platformList.get(i).getYPosition());
+                    System.out.println("Overlapping platform");
+                    setOverlappingAPlatform(true);
+                }
+            }
+        }
+
+        if(isOverlappingAPlatform() == true){
+            setState(STANDING);
+            setGrounded(true);
+        }
+
+        else if (isOverlappingAPlatform() == false){
+            setGrounded(false);
+        }
+
+        if(isAscending()){
+            ascend();
+        }
+        else if(isDescending()){
+            descend();
+        }
+        else if (!isDescending() && !isAscending() && !isGrounded()){
+            setState(FALLING);
+            applyGravity(GRAVITY_CONSTANT);
+        }
+
+        keepWithinScreenBounds();
+    }
+
+    public void drawBananaCount(SpriteBatch batch){
+        String stringOfBananasCollected = Integer.toString(numberOfBananasCollected);
+        Bananatic.font.draw(batch, stringOfBananasCollected, getXPosition() + getWidth() / 2 - 10, getYPosition() + getHeight() + 10);
+    }
+
+    public void draw(SpriteBatch batch){
+        batch.draw(monkeySprite, getXPosition(), getYPosition());
+    }
+
+
 
 }
