@@ -1,0 +1,39 @@
+gameobjects.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+banana
+  rotate: false
+  xy: 370, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+pineapple
+  rotate: false
+  xy: 304, 68
+  size: 75, 167
+  orig: 75, 167
+  offset: 0, 0
+  index: -1
+platform1
+  rotate: false
+  xy: 2, 2
+  size: 300, 55
+  orig: 300, 55
+  offset: 0, 0
+  index: -1
+platform2
+  rotate: false
+  xy: 2, 68
+  size: 300, 67
+  orig: 300, 67
+  offset: 0, 0
+  index: -1
+watermelon
+  rotate: false
+  xy: 304, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

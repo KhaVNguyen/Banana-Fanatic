@@ -4,23 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 /**
  * Created by KhaNguyen on 4/17/15.
  */
 public class Banana {
-    private Texture bananaTexture;
+    private TextureAtlas gameObjectsAtlas;
     private Sprite bananaSprite;
 
     public Banana(){
-        bananaTexture = new Texture(Gdx.files.internal("banana.png"));
-        bananaSprite = new Sprite(bananaTexture);
-        bananaSprite.setY(Gdx.graphics.getHeight() - bananaSprite.getHeight());
-    }
-
-    public Banana(float x, float y){
-        super();
-        bananaSprite.setPosition(x, y);
+        gameObjectsAtlas = new TextureAtlas(Gdx.files.internal("gameobjects.txt"));
+        bananaSprite = new Sprite(gameObjectsAtlas.findRegion("banana"));
+        bananaSprite.setY(Gdx.graphics.getHeight());
     }
 
     public float getWidth(){
@@ -47,14 +43,12 @@ public class Banana {
         return bananaSprite.getY();
     }
 
-    public void draw(SpriteBatch sb){
-        bananaSprite.draw(sb);
+    public void draw(){
+        bananaSprite.draw(Bananatic.batch);
     }
 
     public void dispose(){
-        bananaTexture.dispose();
+        bananaSprite.getTexture().dispose();
+        gameObjectsAtlas.dispose();
     }
-
-
-
 }

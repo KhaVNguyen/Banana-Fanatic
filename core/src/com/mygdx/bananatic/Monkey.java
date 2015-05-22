@@ -2,15 +2,20 @@ package com.mygdx.bananatic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.Iterator;
 
 /**
  * Created by Kha on 4/13/2015.
  */
 public class Monkey {
+    final Bananatic game;
+
     final float GRAVITY_CONSTANT = 1300;
 
     public static final int ASCENDING = 1;
@@ -18,52 +23,103 @@ public class Monkey {
     public static final int FALLING = -2;
     public static final int STANDING = 0;
 
+    public static final int LEFT = 0;
+    public static final int RIGHT = 1;
+
     private int jumpKey;
     private int leftKey;
     private int rightKey;
+    private int throwKey; // key used to throw a pineapple, making it move the direction in which the monkey is facing
 
     private boolean grounded; // true if the monkey is standing on a surface such as the ground or a platform
     private boolean isOverlappingAPlatform;
 
-    private Texture monkeyTexture;
+    private Color color; // color that the monkey sprite will be tinted
+    private TextureAtlas monkeyTextureAtlas; // libGDX optimized way of storing images grouped together, in this instance it is a sprite sheet of animation frames for the monkey
     private Sprite monkeySprite;
 
+    private final int MAX_RUN_LEFT_FRAMES = 8;
+    private final int MAX_RUN_RIGHT_FRAMES = 8;
+    private int currentRunRightFrame;
+    private int currentRunLeftFrame;
+
+    private final int MAX_ASCENDING_RIGHT_FRAMES = 4;
+    private final int MAX_ASCENDING_LEFT_FRAMES = 4;
+    private int currentAscendingRightFrame;
+    private int currentAscendingLeftFrame;
+
+    private final int MAX_DESCENDING_RIGHT_FRAMES = 8;
+    private final int MAX_DESCENDING_LEFT_FRAMES = 8;
+    private int currentDescendingRightFrame;
+    private int currentDescendingLeftFrame;
+
+    private float immobileDuration = 180; // game runs at 60 frames per second, so the monkey will be unable to move for 180 frames or 3 seconds
 
     private float xVelocity;
     private float yVelocity;
     private float originalYVelocity; // used in jump method to reset to after the jump is completed
 
-
+    private int directionFacing;
     private int state;
 
     private int numberOfBananasCollected;
+    private BitmapFont bananaCount; // counter displayed in the corners of the screen on the number of banans collected
 
-    public Monkey(){
-        monkeyTexture = new Texture(Gdx.files.internal("monkey_faceforward.png"));
-        monkeySprite = new Sprite(monkeyTexture);
-        xVelocity = 450f;
-        yVelocity = 900;
-        originalYVelocity = 900;
-        leftKey = Input.Keys.A;
-        rightKey = Input.Keys.D;
-        jumpKey = Input.Keys.W;
-        numberOfBananasCollected = 0;
-        state = STANDING;
-        grounded = true;
-    }
+    private Array<Pineapple> pineapplesHeld;// pineapples collected by the monkey that can be thrown
+    private Array<Pineapple> thrownPineapples; //pineapples that have already been thrown and are in the air
 
-    public Monkey(Texture t, int x, int y, float xv, float yv, int left, int right, int jump, int bananas){
-        monkeySprite = new Sprite(t);
+    private boolean isHit; // has had a pineapple thrown at it
+
+    private boolean isBoosted;
+    float boostTimeRemaining;
+
+    public Monkey(final Bananatic game, Color c,  int x, int y, float xv, float yv, int left, int right, int jump, int throwK, int bananas){
+        this.game = game;
+        color = c;
+        monkeyTextureAtlas = new TextureAtlas(Gdx.files.internal("monkey_animations.txt"));
+        monkeySprite = new Sprite(monkeyTextureAtlas.findRegion("monkey_idle_right"));
         monkeySprite.setPosition(x, y);
+        currentRunLeftFrame = 0;
+        currentRunRightFrame = 0;
+        currentAscendingLeftFrame = 1;
+        currentAscendingRightFrame = 1;
         xVelocity = xv;
         yVelocity = yv;
         originalYVelocity = yv;
         leftKey = left;
         rightKey = right;
         jumpKey = jump;
+        throwKey = throwK;
         numberOfBananasCollected = bananas;
+        directionFacing = RIGHT;
         state = STANDING;
         grounded = true;
+        pineapplesHeld = new Array<Pineapple>();
+        thrownPineapples = new Array<Pineapple>();
+        isHit = false;
+        boostTimeRemaining = 600f;
+        isBoosted = false;
+    }
+
+
+    public Color getColor(){
+        return color;
+    }
+
+    public boolean isBoosted(){
+        return isBoosted;
+    }
+
+    public void setIsBoosted(boolean flag){
+        isBoosted = flag;
+    }
+
+    public float getXVelocity(){
+        return xVelocity;
+    }
+
+    public float getyVelocity(){
+        return yVelocity;
     }
 
     public void setXPosition(float x){
@@ -80,6 +136,11 @@ public class Monkey {
 
     public float getYPosition(){
         return monkeySprite.getY();
+    }
+
+    public void setPosition(float x, float y){
+        monkeySprite.setX(x);
+        monkeySprite.setY(y);
     }
 
     public float getWidth(){
@@ -107,9 +168,6 @@ public class Monkey {
         numberOfBananasCollected += i;
     }
 
-    public void removeFromBananaCounter(int i){
-        numberOfBananasCollected -= i;
-    }
 
     //return what the monkey is currently doing
     public int returnState(){
@@ -118,6 +176,10 @@ public class Monkey {
 
     public void setState(int s){
         state = s;
+    }
+
+    public void setHit(boolean flag){
+        isHit = flag;
     }
 
     public boolean isAscending(){
@@ -191,6 +253,64 @@ public class Monkey {
         return numberOfBananasCollected;
     }
 
+    public void addPineapple(Pineapple pineapple){
+        pineapplesHeld.add(pineapple);
+    }
+
+    public int getNumberOfPineapplesCollected(){
+        return pineapplesHeld.size; //size of the pineapple array, ie. the number of pineapples the monkey has collected
+    }
+
+    //
+    public void throwPineappleLeft(){
+        thrownPineapples.add(pineapplesHeld.get(pineapplesHeld.size - 1));
+        thrownPineapples.get(thrownPineapples.size - 1).setPosition(getXPosition(), getYPosition() + getHeight() / 2); //set x and y positions of pineapple near the monkey throwing it
+        thrownPineapples.get(thrownPineapples.size - 1).setMovingLeft();
+        pineapplesHeld.removeIndex(pineapplesHeld.size - 1);
+    }
+
+    public void throwPineappleRight(){
+        thrownPineapples.add(pineapplesHeld.get(pineapplesHeld.size - 1));
+        thrownPineapples.get(thrownPineapples.size - 1).setPosition(getXPosition(), getYPosition() + getHeight()/2 ); //set x and y positions of pineapple near the monkey throwing it
+        thrownPineapples.get(thrownPineapples.size - 1).setMovingRight();
+        pineapplesHeld.removeIndex(pineapplesHeld.size - 1);
+    }
+
+    // @param: the other monkey (not the monkey calling the method)
+    // if any of the pineapples collide with the other monkey, remove them from the array, then make it disappear
+    // else: continue moving the pineapple
+    public void updateThrownPineapples(Monkey otherMonkey){
+        Iterator <Pineapple> pineappleIterator = thrownPineapples.iterator();
+        while(pineappleIterator.hasNext()){
+            Pineapple testedPineapple = pineappleIterator.next();
+            if(testedPineapple.getXPosition() <= 0 || testedPineapple.getXPosition() >= Gdx.graphics.getWidth()){
+                testedPineapple.dispose();
+                pineappleIterator.remove();
+            }
+            else if(testedPineapple.overlapsMonkey(otherMonkey)){
+                otherMonkey.setHit(true);
+                testedPineapple.dispose();
+                pineappleIterator.remove();
+            }
+            else{
+                testedPineapple.update();
+            }
+        }
+
+    }
+
+    public void drawPineapples(){
+        for(Pineapple p: thrownPineapples){
+            p.draw();
+        }
+
+    }
+
+    public void receiveWatermelonBoost(){
+        boostTimeRemaining = 600f;
+        xVelocity = 700;
+    }
+
     /**
      * checks if the monkey is overlapping the banana by using cases in which
      * the monkey is not overlapping the banana as this is easier than checking when it is
@@ -209,29 +329,51 @@ public class Monkey {
      * @param b
      * @return true if any part of the monkeySprite overlaps any part of the banana
      */
-    public boolean overlapsBanana(Banana b){
-        return !(getXPosition() > b.getXPosition() + b.getWidth() ||
-                 getXPosition() + getWidth() < b.getXPosition() ||
-                 getYPosition() > b.getYPosition() + b.getHeight() ||
-                 getYPosition() + getHeight() < b.getYPosition());
+    public boolean overlaps(Object o){
+        if(o instanceof Banana){
+            Banana tempBanana = (Banana)o;
+            return !(getXPosition() > tempBanana.getXPosition() + tempBanana.getWidth() ||
+                    getXPosition() + getWidth() < tempBanana.getXPosition() ||
+                    getYPosition() > tempBanana.getYPosition() + tempBanana.getHeight() ||
+                    getYPosition() + getHeight() < tempBanana.getYPosition());
+        }
 
-    }
+        else if (o instanceof Platform){
+            Platform tempPlatform = (Platform)o;
+            return !(getXPosition() > tempPlatform.getXPosition() + tempPlatform.getWidth() ||
+                    getXPosition() + getWidth() < tempPlatform.getXPosition() ||
+                    getYPosition() > tempPlatform.getYPosition() + tempPlatform.getHeight() ||
+                    getYPosition() + getHeight() < tempPlatform.getYPosition());
+        }
 
-    public boolean overlapsPlatform(Platform p){
-        return !(getXPosition() > p.getXPosition() + p.getWidth() ||
-                getXPosition() + getWidth() < p.getXPosition() ||
-                getYPosition() > p.getYPosition() + p.getHeight() ||
-                getYPosition() + getHeight() < p.getYPosition());
+        else if (o instanceof Pineapple){
+            Pineapple tempPineapple = (Pineapple)o;
+            return !(getXPosition() > tempPineapple.getXPosition() + tempPineapple.getWidth() ||
+                    getXPosition() + getWidth() < tempPineapple.getXPosition() ||
+                    getYPosition() > tempPineapple.getYPosition() + tempPineapple.getHeight() ||
+                    getYPosition() + getHeight() < tempPineapple.getYPosition());
+        }
+
+        else if (o instanceof Watermelon){
+            Watermelon tempWatermelon = (Watermelon)o;
+            return !(getXPosition() > tempWatermelon.getXPosition() + tempWatermelon.getWidth() ||
+                    getXPosition() + getWidth() < tempWatermelon.getXPosition() ||
+                    getYPosition() > tempWatermelon.getYPosition() + tempWatermelon.getHeight() ||
+                    getYPosition() + getHeight() < tempWatermelon.getYPosition());
+        }
+
+        return false;
 
     }
 
     public void dispose(){
         monkeySprite.getTexture().dispose();
+        monkeyTextureAtlas.dispose();
     }
 
     // prevent monkey from going past the edges of the screen by
     // res
-    public void keepWithinScreenBounds(){
+    private void keepWithinScreenBounds(){
         if(getXPosition() + getWidth() >= Gdx.graphics.getWidth()){
             setXPosition(Gdx.graphics.getWidth() - getWidth());
         }
@@ -247,24 +389,68 @@ public class Monkey {
     }
 
     public void update(Array<Platform> platformList){ // given an array of platform from which the monkey will check collision
-        if(Gdx.input.isKeyPressed(jumpKey) && isGrounded()){
+        if(directionFacing == RIGHT){
+            monkeySprite.setRegion(monkeyTextureAtlas.findRegion("monkey_idle_right"));
+        }
+        else if (directionFacing == LEFT){
+            monkeySprite.setRegion(monkeyTextureAtlas.findRegion("monkey_idle_left"));
+        }
+        if(isHit) {
+            isBoosted = false;
+            monkeySprite.setRegion(monkeyTextureAtlas.findRegion("monkey_dead"));
+            immobileDuration--;
+        }
+        if(immobileDuration <= 0) {
+            isHit = false;
+            immobileDuration = 180; //reset immobile duration after monkey becomes mobile again;
+            monkeySprite.setRegion(monkeyTextureAtlas.findRegion("monkey_faceforward"));
+        }
+
+        if(isBoosted){
+            boostTimeRemaining--;
+            if(boostTimeRemaining <= 0f){
+                System.out.println("No longer boosted!");
+                isBoosted = false;
+                xVelocity = 450f;
+            }
+        }
+
+
+        if(Gdx.input.isKeyPressed(jumpKey) && isGrounded() && !isHit){ // jump
             resetVelocity();
             setGrounded(false);
             setState(ASCENDING);
+            currentAscendingLeftFrame = 1;
+            currentAscendingRightFrame = 1;
         }
-        if (Gdx.input.isKeyPressed(rightKey) && returnState() != FALLING){
+        else if (Gdx.input.isKeyPressed(rightKey) && returnState() != FALLING && !isHit){ //run right
+            currentRunRightFrame++;
+            if(currentRunRightFrame > MAX_RUN_RIGHT_FRAMES){
+                currentRunRightFrame = 0;
+            }
+            else{
+                monkeySprite.setRegion(monkeyTextureAtlas.findRegion(String.format("monkey_run_" + "%d" + "_right", currentRunRightFrame)));
+            }
+            directionFacing = RIGHT;
             moveRight();
         }
-        if(Gdx.input.isKeyPressed(leftKey) && returnState() != FALLING){
+        else if(Gdx.input.isKeyPressed(leftKey) && returnState() != FALLING && !isHit){ //run left
+            currentRunLeftFrame++;
+            if(currentRunLeftFrame > MAX_RUN_LEFT_FRAMES){
+                currentRunLeftFrame = 0;
+            }
+            else{
+                monkeySprite.setRegion(monkeyTextureAtlas.findRegion(String.format("monkey_run_" + "%d" + "_left", currentRunLeftFrame)));
+            }
+            directionFacing = LEFT;
             moveLeft();
         }
 
-        setOverlappingAPlatform(false);
+        setOverlappingAPlatform(false); // guilty until proven innocent
         for(int i = 0; i < platformList.size; i++){
             if(returnState() != ASCENDING){
-                if(overlapsPlatform(platformList.get(i))) { // if the monkey overlaps any of the platforms
+                if(overlaps(platformList.get(i))) { // if the monkey overlaps any of the platforms
                     setYPosition(platformList.get(i).getHeight() + platformList.get(i).getYPosition());
-                    System.out.println("Overlapping platform");
                     setOverlappingAPlatform(true);
                 }
             }
@@ -275,14 +461,42 @@ public class Monkey {
             setGrounded(true);
         }
 
-        else if (isOverlappingAPlatform() == false){
+        else if(isOverlappingAPlatform() == false){
             setGrounded(false);
         }
 
         if(isAscending()){
+            if(directionFacing == RIGHT){
+                currentAscendingRightFrame++;
+                if(currentAscendingRightFrame > MAX_ASCENDING_RIGHT_FRAMES){
+                    currentAscendingRightFrame = MAX_ASCENDING_RIGHT_FRAMES;
+                }
+                monkeySprite.setRegion(monkeyTextureAtlas.findRegion(String.format("monkey_jump_" + "%d" +"_right", currentAscendingRightFrame)));
+            }
+            else if(directionFacing == LEFT){
+                currentAscendingLeftFrame++;
+                if(currentAscendingLeftFrame > MAX_ASCENDING_LEFT_FRAMES){
+                    currentAscendingLeftFrame = MAX_ASCENDING_LEFT_FRAMES;
+                }
+                monkeySprite.setRegion(monkeyTextureAtlas.findRegion(String.format("monkey_jump_" + "%d" + "_left", currentAscendingLeftFrame)));
+            }
             ascend();
         }
         else if(isDescending()){
+            if(directionFacing == RIGHT){
+                currentDescendingRightFrame++;
+                if(currentDescendingRightFrame > MAX_DESCENDING_RIGHT_FRAMES){
+                    currentDescendingRightFrame = MAX_DESCENDING_RIGHT_FRAMES;
+                }
+                monkeySprite.setRegion(monkeyTextureAtlas.findRegion(String.format("monkey_jump_" + "%d" +"_right", currentDescendingRightFrame)));
+            }
+            else if (directionFacing == LEFT){
+                currentDescendingLeftFrame++;
+                if(currentDescendingLeftFrame > MAX_DESCENDING_LEFT_FRAMES){
+                    currentDescendingLeftFrame = MAX_DESCENDING_LEFT_FRAMES;
+                }
+                monkeySprite.setRegion(monkeyTextureAtlas.findRegion(String.format("monkey_jump_" + "%d" +"_left", currentDescendingLeftFrame)));
+            }
             descend();
         }
         else if (!isDescending() && !isAscending() && !isGrounded()){
@@ -291,17 +505,32 @@ public class Monkey {
         }
 
         keepWithinScreenBounds();
+
+        if(Gdx.input.isKeyPressed(throwKey) && !isHit){
+            if(directionFacing == LEFT && pineapplesHeld.size != 0){
+                throwPineappleLeft();
+
+            }
+            else if(directionFacing == RIGHT && pineapplesHeld.size != 0){
+                throwPineappleRight();
+            }
+        }
     }
 
-    public void drawBananaCount(SpriteBatch batch){
-        String stringOfBananasCollected = Integer.toString(numberOfBananasCollected);
-        Bananatic.font.draw(batch, stringOfBananasCollected, getXPosition() + getWidth() / 2 - 10, getYPosition() + getHeight() + 10);
+    public void draw(){
+        monkeySprite.setColor(color);
+        monkeySprite.draw(game.batch);
+        //batch.draw(monkeySprite, monkeySprite.getX(), monkeySprite.getY());
     }
 
-    public void draw(SpriteBatch batch){
-        batch.draw(monkeySprite, getXPosition(), getYPosition());
+    public void drawPineapple(){
+        if(directionFacing == RIGHT){
+            pineapplesHeld.get(0).setPosition(getXPosition() + getWidth()/2, getYPosition() + getHeight()/4);
+        }
+        else if(directionFacing == LEFT){
+            pineapplesHeld.get(0).setPosition(getXPosition() - getWidth()/2, getYPosition() + getHeight()/4);
+        }
+        pineapplesHeld.get(0).draw();
     }
-
-
 
 }

@@ -13,10 +13,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeType;
 
 public class Bananatic extends Game {
 	public static SpriteBatch batch;
-	public static BitmapFont font;
+	public BitmapFont font;
+
 
 	@Override
 	public void dispose() {
+		font.dispose();
 		batch.dispose();
 	}
 
@@ -24,6 +26,6 @@ public class Bananatic extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		this.setScreen(new GameScreen()); //entry point of the game
+		this.setScreen(new BfMainMenu(this)); //entry point of the game
 	}
 }

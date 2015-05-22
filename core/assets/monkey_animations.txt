@@ -1,0 +1,256 @@
+monkey_animations.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+monkey_dead
+  rotate: false
+  xy: 676, 2
+  size: 103, 152
+  orig: 103, 152
+  offset: 0, 0
+  index: -1
+monkey_faceforward
+  rotate: false
+  xy: 781, 2
+  size: 99, 152
+  orig: 99, 152
+  offset: 0, 0
+  index: -1
+monkey_idle_left
+  rotate: false
+  xy: 967, 157
+  size: 99, 156
+  orig: 99, 156
+  offset: 0, 0
+  index: -1
+monkey_idle_right
+  rotate: false
+  xy: 1068, 157
+  size: 99, 156
+  orig: 99, 156
+  offset: 0, 0
+  index: -1
+monkey_jump_1_left
+  rotate: false
+  xy: 536, 157
+  size: 96, 155
+  orig: 96, 155
+  offset: 0, 0
+  index: -1
+monkey_jump_1_right
+  rotate: false
+  xy: 438, 157
+  size: 96, 155
+  orig: 96, 155
+  offset: 0, 0
+  index: -1
+monkey_jump_2_left
+  rotate: false
+  xy: 2, 157
+  size: 102, 154
+  orig: 102, 154
+  offset: 0, 0
+  index: -1
+monkey_jump_2_right
+  rotate: false
+  xy: 106, 157
+  size: 102, 154
+  orig: 102, 154
+  offset: 0, 0
+  index: -1
+monkey_jump_3_left
+  rotate: false
+  xy: 1498, 157
+  size: 99, 158
+  orig: 99, 158
+  offset: 0, 0
+  index: -1
+monkey_jump_3_right
+  rotate: false
+  xy: 1397, 157
+  size: 99, 158
+  orig: 99, 158
+  offset: 0, 0
+  index: -1
+monkey_jump_4_left
+  rotate: false
+  xy: 2, 2
+  size: 99, 150
+  orig: 99, 150
+  offset: 0, 0
+  index: -1
+monkey_jump_4_right
+  rotate: false
+  xy: 103, 2
+  size: 99, 150
+  orig: 99, 150
+  offset: 0, 0
+  index: -1
+monkey_jump_5_left
+  rotate: false
+  xy: 1498, 157
+  size: 99, 158
+  orig: 99, 158
+  offset: 0, 0
+  index: -1
+monkey_jump_5_right
+  rotate: false
+  xy: 1397, 157
+  size: 99, 158
+  orig: 99, 158
+  offset: 0, 0
+  index: -1
+monkey_jump_6_left
+  rotate: false
+  xy: 2, 157
+  size: 102, 154
+  orig: 102, 154
+  offset: 0, 0
+  index: -1
+monkey_jump_6_right
+  rotate: false
+  xy: 106, 157
+  size: 102, 154
+  orig: 102, 154
+  offset: 0, 0
+  index: -1
+monkey_jump_7_left
+  rotate: false
+  xy: 536, 157
+  size: 96, 155
+  orig: 96, 155
+  offset: 0, 0
+  index: -1
+monkey_jump_7_right
+  rotate: false
+  xy: 438, 157
+  size: 96, 155
+  orig: 96, 155
+  offset: 0, 0
+  index: -1
+monkey_jump_8_left
+  rotate: false
+  xy: 967, 157
+  size: 99, 156
+  orig: 99, 156
+  offset: 0, 0
+  index: -1
+monkey_jump_8_right
+  rotate: false
+  xy: 866, 157
+  size: 99, 156
+  orig: 99, 156
+  offset: 0, 0
+  index: -1
+monkey_run_1_left
+  rotate: false
+  xy: 324, 157
+  size: 112, 154
+  orig: 112, 154
+  offset: 0, 0
+  index: -1
+monkey_run_1_right
+  rotate: false
+  xy: 210, 157
+  size: 112, 154
+  orig: 112, 154
+  offset: 0, 0
+  index: -1
+monkey_run_2_left
+  rotate: false
+  xy: 1451, 2
+  size: 113, 153
+  orig: 113, 153
+  offset: 0, 0
+  index: -1
+monkey_run_2_right
+  rotate: false
+  xy: 882, 2
+  size: 113, 153
+  orig: 113, 153
+  offset: 0, 0
+  index: -1
+monkey_run_3_left
+  rotate: false
+  xy: 1283, 157
+  size: 112, 157
+  orig: 112, 157
+  offset: 0, 0
+  index: -1
+monkey_run_3_right
+  rotate: false
+  xy: 1169, 157
+  size: 112, 157
+  orig: 112, 157
+  offset: 0, 0
+  index: -1
+monkey_run_4_left
+  rotate: false
+  xy: 997, 2
+  size: 113, 153
+  orig: 113, 153
+  offset: 0, 0
+  index: -1
+monkey_run_4_right
+  rotate: false
+  xy: 1112, 2
+  size: 113, 153
+  orig: 113, 153
+  offset: 0, 0
+  index: -1
+monkey_run_5_left
+  rotate: false
+  xy: 319, 2
+  size: 119, 151
+  orig: 119, 151
+  offset: 0, 0
+  index: -1
+monkey_run_5_right
+  rotate: false
+  xy: 555, 2
+  size: 119, 151
+  orig: 119, 151
+  offset: 0, 0
+  index: -1
+monkey_run_6_left
+  rotate: false
+  xy: 634, 157
+  size: 114, 155
+  orig: 114, 155
+  offset: 0, 0
+  index: -1
+monkey_run_6_right
+  rotate: false
+  xy: 750, 157
+  size: 114, 155
+  orig: 114, 155
+  offset: 0, 0
+  index: -1
+monkey_run_7_left
+  rotate: false
+  xy: 1227, 2
+  size: 110, 153
+  orig: 110, 153
+  offset: 0, 0
+  index: -1
+monkey_run_7_right
+  rotate: false
+  xy: 1339, 2
+  size: 110, 153
+  orig: 110, 153
+  offset: 0, 0
+  index: -1
+monkey_run_8_left
+  rotate: false
+  xy: 440, 2
+  size: 113, 151
+  orig: 113, 151
+  offset: 0, 0
+  index: -1
+monkey_run_8_right
+  rotate: false
+  xy: 204, 2
+  size: 113, 151
+  orig: 113, 151
+  offset: 0, 0
+  index: -1
