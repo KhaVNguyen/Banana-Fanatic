@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="Gradle: com.badlogicgames.box2dlights:box2dlights:1.3">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.box2dlights/box2dlights/1.3/e829c3543ab5a6b3ff818615a8620024f6a14fe0/box2dlights-1.3.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx-backend-headless:1.5.5">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-headless/1.5.5/87dc0d657c7107d649fd03adacb50dc22fe65b74/gdx-backend-headless-1.5.5.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx-backend-lwjgl:1.5.5">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-lwjgl/1.5.5/3839f73b56e77e2d06cb874952dff466756e1e25/gdx-backend-lwjgl-1.5.5.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx-box2d-platform:1.5.5:natives-desktop">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-box2d-platform/1.5.5/40ad16dd3eb68b1ed68b37d77c4e544a61c3b8af/gdx-box2d-platform-1.5.5-natives-desktop.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx-box2d:1.5.5">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-box2d/1.5.5/8931a097fc80279c6b9ee695560a85c1e280c7ea/gdx-box2d-1.5.5.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx-freetype-platform:1.5.5:natives-desktop">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-freetype-platform/1.5.5/b43e12f7ddfccf0d1c1a549545f62e7d7cc4ff40/gdx-freetype-platform-1.5.5-natives-desktop.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx-freetype:1.5.5">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-freetype/1.5.5/66f30434d02fbe94f098f75747df94d7136fa251/gdx-freetype-1.5.5.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx-platform:1.5.5:natives-desktop">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-platform/1.5.5/eefc50144dfe82f3ba4c2bc22aeabb7153d469c0/gdx-platform-1.5.5-natives-desktop.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx-tools:1.5.5">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-tools/1.5.5/101ffda02039878c22ec20d1f95fe9f88878cbfb/gdx-tools-1.5.5.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.gdx:gdx:1.5.5">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.5.5/9896d723afaeaae8229546119f9abffac5f8dbc7/gdx-1.5.5.jar" />
+  </library>
+  <library name="Gradle: com.badlogicgames.jlayer:jlayer:1.0.1-gdx">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.badlogicgames.jlayer/jlayer/1.0.1-gdx/7cca83cec5c1b2f011362f4d85aabd71a73b049d/jlayer-1.0.1-gdx.jar" />
+  </library>
+  <library name="Gradle: com.esotericsoftware:reflectasm:1.10.0">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.esotericsoftware/reflectasm/1.10.0/ee6b6011be370e49d916ab86abb95d93015e84f0/reflectasm-1.10.0.jar" />
+  </library>
+  <library name="Gradle: com.kotcrab.vis:vis-ui:0.7.1">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.kotcrab.vis/vis-ui/0.7.1/e6286cacc200da5260b9df09540810ed766b69dc/vis-ui-0.7.1.jar" />
+  </library>
+  <library name="Gradle: com.underwaterapps.overlap2druntime:overlap2d-runtime-libgdx:0.0.8">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/com.underwaterapps.overlap2druntime/overlap2d-runtime-libgdx/0.0.8/f2e87920381f33cb5e8af962eaa647f7e13f2da/overlap2d-runtime-libgdx-0.0.8.jar" />
+  </library>
+  <library name="Gradle: net.java.jinput:jinput-platform:2.0.5:natives-linux">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput-platform/2.0.5/7ff832a6eb9ab6a767f1ade2b548092d0fa64795/jinput-platform-2.0.5-natives-linux.jar" />
+  </library>
+  <library name="Gradle: net.java.jinput:jinput-platform:2.0.5:natives-osx">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput-platform/2.0.5/53f9c919f34d2ca9de8c51fc4e1e8282029a9232/jinput-platform-2.0.5-natives-osx.jar" />
+  </library>
+  <library name="Gradle: net.java.jinput:jinput-platform:2.0.5:natives-windows">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput-platform/2.0.5/385ee093e01f587f30ee1c8a2ee7d408fd732e16/jinput-platform-2.0.5-natives-windows.jar" />
+  </library>
+  <library name="Gradle: net.java.jinput:jinput:2.0.5">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput/2.0.5/39c7796b469a600f72380316f6b1f11db6c2c7c4/jinput-2.0.5.jar" />
+  </library>
+  <library name="Gradle: net.java.jutils:jutils:1.0.0">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/net.java.jutils/jutils/1.0.0/e12fe1fda814bd348c1579329c86943d2cd3c6a6/jutils-1.0.0.jar" />
+  </library>
+  <library name="Gradle: org.jcraft:jorbis:0.0.17">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/org.jcraft/jorbis/0.0.17/8872d22b293e8f5d7d56ff92be966e6dc28ebdc6/jorbis-0.0.17.jar" />
+  </library>
+  <library name="Gradle: org.lwjgl.lwjgl:lwjgl-platform:2.9.2:natives-linux">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl-platform/2.9.2/d276cdf61fe2b516c7b7f4aa1b8dea91dbdc8d56/lwjgl-platform-2.9.2-natives-linux.jar" />
+  </library>
+  <library name="Gradle: org.lwjgl.lwjgl:lwjgl-platform:2.9.2:natives-osx">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl-platform/2.9.2/d55b46b40b40249d627a83a7f7f22649709d70c3/lwjgl-platform-2.9.2-natives-osx.jar" />
+  </library>
+  <library name="Gradle: org.lwjgl.lwjgl:lwjgl-platform:2.9.2:natives-windows">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl-platform/2.9.2/510c7d317f5e9e700b9cfaac5fd38bdebf0702e0/lwjgl-platform-2.9.2-natives-windows.jar" />
+  </library>
+  <library name="Gradle: org.lwjgl.lwjgl:lwjgl:2.9.2">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl/2.9.2/a9d80fe5935c7a9149f6584d9777cfd471f65489/lwjgl-2.9.2.jar" />
+  </library>
+  <library name="Gradle: org.lwjgl.lwjgl:lwjgl_util:2.9.2">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl_util/2.9.2/4b9e37300a87799856e0bd15ed81663cdb6b0947/lwjgl_util-2.9.2.jar" />
+  </library>
+  <library name="Gradle: org.ow2.asm:asm:4.2">
+    <archive path="/Users/KhaNguyen/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/4.2/4b2c12b92dd045aeabf5b2aeeb3220bf010da9d4/asm-4.2.jar" />
+  </library>
+</eclipse-userlibraries>
+
